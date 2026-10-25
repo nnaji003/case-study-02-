@@ -1,1 +1,56 @@
+function S = choose_leaders(G, P0, faulty, g, m)
+%CHOOSE_LEADERS  Choose which robots become leaders (ESE 105, Case Study II, Part III).
+%
+%   S = choose_leaders(G, P0, faulty, g, m)
+%
+%   Inputs
+%     G       n-by-n adjacency matrix of the communication network
+%     P0      n-by-2 landing positions; row i is robot i's (x, y)
+%     faulty  vector of indices of robots with broken drives
+%     g       1-by-2 rally point
+%     m       maximum number of leaders
+%
+%
+%   Output
+%     S       vector of at most m distinct robot indices, none of them faulty
+%
+%   Strategy:
+%   Rank every non-faulty robot by a score that combines communication
+%   degree and closeness to the rally point, then return the top m.
+%
+%   Team: Team 20
+%   Members: Jasmine Freund, Nneka Nnaji, Nicole
+
+n = size(G, 1);
+
+if m <= 0 || n == 0
+    S = zeros(0, 1);
+    return;
+end
+
+working = true(n, 1);
+faulty = faulty(:);
+faulty = faulty(faulty >= 1 & faulty <= n);
+working(faulty) = false;
+
+candidateIndices = find(working);
+if isempty(candidateIndices)
+    S = zeros(0, 1);
+    return;
+end
+
+degreeScores = sum(G, 2);
+distanceScores = vecnorm(P0 - g, 2, 2);
+
+% Higher is better: more connections and closer to the rally point.
+combinedScores = degreeScores(candidateIndices) ./ (1 + distanceScores(candidateIndices));
+
+% Break ties by smaller robot index.
+ranking = sortrows([-combinedScores, candidateIndices]);
+orderedCandidates = ranking(:, 2);
+
+S = orderedCandidates(1:min(m, numel(orderedCandidates)));
+S = S(:);
+
+end
 
