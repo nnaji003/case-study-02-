@@ -42,7 +42,7 @@ end
 degreeScores = sum(G, 2);
 distanceScores = vecnorm(P0 - g, 2, 2);
 
-% Higher is better: more connections and closer to the rally point.
+% Higher is better: more connections which are closer to the rally point.
 combinedScores = degreeScores(candidateIndices) ./ (1 + distanceScores(candidateIndices));
 
 % Break ties by smaller robot index.
