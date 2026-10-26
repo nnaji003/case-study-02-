@@ -1,3 +1,30 @@
+
+%make complete function 
+function G = make_complete(n)
+ones_matrix = ones(n);
+identity_matrix = eye(n); 
+G = ones_matrix-identity_matrix;
+end 
+
+%we did ones_matrix instead of ones_vector times one_matrix transposed bc
+%it just give us the one matrix as an end product.
+
+
+%make star function 
+function G = make_star(n) 
+e_1_vector = zeros(n);
+e_1_vector(1)=1;
+one_vector = ones(1,n);
+G = e_1_vector*one_vector'+one_vector*e_1_vector'-2*(e_1_vector*e_1_vector');
+end 
+
+    function G = make_ring(n,k)
+        for [j:k]
+
+
+    end 
+
+
 function D = make_deployment(seed)
 %MAKE_DEPLOYMENT  Generate a random robot-swarm deployment (ESE 105, Case Study II).
 %
