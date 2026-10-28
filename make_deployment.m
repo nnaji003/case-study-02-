@@ -139,3 +139,31 @@ for k = 1:n
 end
 tf = all(R(:));
 end
+
+
+%nicole new code 
+n=size(P,1);
+one = ones(n,1);
+C = eye(n) - (1/n)*one*one';
+x = P(:,1);
+y = P(:,2);
+Cx_0 = C*x;
+Cy_0 = C*y;
+delta_0 = sqrt(abs(norm(Cx_0)^2+norm(Cy_0)^2));
+
+k=0;
+delta_k = delta_0;
+x_k = x;
+y_k = y;
+
+while delta_k>=0.01*delta_0
+
+    k=k+1;
+    x_k = x+k;
+    y_k = y+k;
+    Cx_k = C*x_k;
+    Cy_k = C*y_k;
+    delta_k = sqrt(abs(norm(Cx_k)^2+norm(Cy_k)^2))
+    
+end 
+
