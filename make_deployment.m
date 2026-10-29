@@ -167,3 +167,35 @@ while delta_k>=0.01*delta_0
     
 end 
 
+%nicole new code for part 1 of part 3 
+
+%the function records the x coordinate of the robots over time k 
+X=P(:,1);
+x0=X;
+
+function robot_x_coordinates_over_k = simulate_anchored(W, lambda, a, x0, K)
+n = length(x0);
+Lambda = diag(lambda);
+I = eye(n);
+anchor = (I - Lambda) * a;
+
+
+x_coordinate_of_robots = zeros(n, K + 1);
+%bc x0 is recorded into this matrix so we need k+1 number of columns as the first column
+%represents k=0, n stands for the number of robots being deployed also is
+%the amount or rows we have in the matrix 
+
+x_coordinate_of_robots(:, 1) = x0;
+%first column of the matrix is x0 the starting x coordinates of all the robots 
+
+for k = 1:K
+    x_coordinate_of_robots(:, k+1) = Lambda * W * x_coordinate_of_robots(:, k) + anchor;
+    %modeled after the x[k+1]=Lamba*Wx[k]+I-(Lambda)a -> the last term is
+    %replaced with anchor after we solved for it.    
+    %the robots movement is included by trying to move closer to their
+    %neighbors, which is scaled by Lambda * W and anchor is constant force
+    %of the robot being pulled to the target, followers have 0, leaders
+    %have a partial anchor value and faulty robots have 100% anchor value
+    %to stay where they are 
+end
+end
