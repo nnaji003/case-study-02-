@@ -199,3 +199,58 @@ for k = 1:K
     %to stay where they are 
 end
 end
+
+
+
+%nicole simulate anchor 
+
+n = length(P0(:, 1));
+Lambda = diag(lambda);
+I_n = eye(n);
+
+% 2. Call simulate_anchored once per coordinate (per assignment requirements)
+X_history = simulate_anchored(W_A, lambda, a_x, P0(:, 1), K);
+Y_history = simulate_anchored(W_A, lambda, a_y, P0(:, 2), K);
+
+% 3. Calculate theoretical steady state for X using the backslash operator
+anchor_x = (I_n - Lambda) * a_x;
+x_star = (I_n - Lambda * W_A) \ anchor_x;
+
+% 4. Confirm it matches your long-run simulation's final column
+final_simulated_x = X_history(:, end);
+difference = norm(final_simulated_x - x_star);
+disp(['Steady-state difference (X): ', num2str(difference)]);
+
+
+function robot_x_coordinates_over_k = simulate_anchored(W, lambda, a, x0, K)
+    % Find total number of robots deployed
+    n = length(x0);
+
+    % Convert the lambda vector into a diagonal matrix (dimensions nxn) 
+    % so matrix multiplications work by scaling each robot's row properly  
+    Lambda = diag(lambda);
+
+    % Create an n x n identity matrix
+    I = eye(n);
+
+    % Represents the fixed amount of pull that the robots have to their destination
+    anchor = (I - Lambda) * a;
+
+    % Pre-allocate output matrix with n rows (robots) and K+1 columns (time steps k=0 to K)
+    robot_x_coordinates_over_k = zeros(n, K + 1);
+
+    % Set the first column (k = 0) to the initial starting coordinates x0
+    robot_x_coordinates_over_k(:, 1) = x0;
+
+    % Loop through each step k from 1 to K to calculate the state at step k+1
+    for k = 1:K
+        % Extract the current position vector of all robots at step k (column k)
+        x_current = robot_x_coordinates_over_k(:, k);
+        
+        % Calculate the next position vector using the update rule
+        x_next = Lambda * (W * x_current) + anchor;
+        
+        % Store the updated positions in the next column (k + 1)
+        robot_x_coordinates_over_k(:, k + 1) = x_next;
+    end
+end
